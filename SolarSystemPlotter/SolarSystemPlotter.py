@@ -1,6 +1,7 @@
 from skyfield.api import load
 from skyfield.framelib import ecliptic_frame
 import matplotlib.pyplot as plt
+import math as m
 
 # Create a timescale and ask the current time.
 ts = load.timescale()
@@ -19,7 +20,7 @@ saturn = solarSysObjects['saturn barycenter']
 uranus = solarSysObjects['uranus barycenter']
 neptun = solarSysObjects['neptune barycenter']
 
-solarSysObjects = [sun, mercury, venus, earth, mars,
+solarSysObjects = [mercury, venus, earth, mars,
            jupiter, saturn, uranus, neptun]
 
 def getPosition(object, time = None):
@@ -37,14 +38,22 @@ def getEclipticPos(object, time = None):
 
 xs = []
 ys = []
-labels = ['sun', 'mercury', 'venus', 'earth', 'mars', 'jupiter', 'saturn', 'uranus', 'neptune']
-dists = []
+figure, axes = plt.subplots()
+
 for o in solarSysObjects:
     lat, lon, distance = getEclipticPos(o)
+
+    x = distance.au * m.cos(lon.radians)
+    y = distance.au * m.sin(lon.radians)
     
-    xs.append(lat.degrees)
-    ys.append(lon.degrees)
-    dists.append(distance.au)
+    Drawing_uncolored_circle = plt.Circle((0, 0),
+                                        distance.au,
+                                        fill = False)
     
-plt.scatter(xs, ys)
+    axes.set_aspect(1)
+    axes.add_patch(Drawing_uncolored_circle)
+    
+    plt.scatter(x, y)
+    
+ 
 plt.show()
